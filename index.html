@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/proj4.js"></script>
+        <script src="js/proj4leaflet.js"></script>
+        <script src="data/DaveytonSPpilotareas_2.js"></script>
+        <script src="data/Diepslootpilotareas_3.js"></script>
+        <script src="data/SP_NAMEGT_4.js"></script>
+        <script>
+        var crs = new L.Proj.CRS('EPSG:3857', '+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs', {
+            resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
+        });
+        var map = L.map('map', {
+            crs: crs,
+            continuousWorld: false,
+            worldCopyJump: false, 
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-26.1681678099427,28.396892636626884],[-26.135815828763622,28.477218279691304]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        document.querySelector(".leaflet-popup-pane").addEventListener("load", function(event) {
+          var tagName = event.target.tagName,
+            popup = map._popup;
+          // Also check if flag is already set.
+          if (tagName === "IMG" && popup && !popup._updated) {
+            popup._updated = true; // Set flag to prevent looping.
+            popup.update();
+          }
+        }, true);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GOogelsatalitehybrid_0');
+        map.getPane('pane_GOogelsatalitehybrid_0').style.zIndex = 400;
+        var layer_GOogelsatalitehybrid_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GOogelsatalitehybrid_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_GOogelsatalitehybrid_0;
+        map.addLayer(layer_GOogelsatalitehybrid_0);
+        map.createPane('pane_Googlemaps_1');
+        map.getPane('pane_Googlemaps_1').style.zIndex = 401;
+        var layer_Googlemaps_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {
+            pane: 'pane_Googlemaps_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_Googlemaps_1;
+        function pop_DaveytonSPpilotareas_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SAL_CODE'] !== null ? autolinker.link(feature.properties['SAL_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SAL_CODE_s'] !== null ? autolinker.link(feature.properties['SAL_CODE_s'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SP_CODE'] !== null ? autolinker.link(feature.properties['SP_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SP_CODE_st'] !== null ? autolinker.link(feature.properties['SP_CODE_st'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SP_NAME'] !== null ? autolinker.link(feature.properties['SP_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MP_CODE'] !== null ? autolinker.link(feature.properties['MP_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MP_CODE_st'] !== null ? autolinker.link(feature.properties['MP_CODE_st'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MP_NAME'] !== null ? autolinker.link(feature.properties['MP_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MN_MDB_C'] !== null ? autolinker.link(feature.properties['MN_MDB_C'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MN_CODE'] !== null ? autolinker.link(feature.properties['MN_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MN_CODE_st'] !== null ? autolinker.link(feature.properties['MN_CODE_st'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MN_NAME'] !== null ? autolinker.link(feature.properties['MN_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DC_MDB_C'] !== null ? autolinker.link(feature.properties['DC_MDB_C'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DC_MN_C'] !== null ? autolinker.link(feature.properties['DC_MN_C'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DC_MN_C_st'] !== null ? autolinker.link(feature.properties['DC_MN_C_st'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DC_NAME'] !== null ? autolinker.link(feature.properties['DC_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PR_MDB_C'] !== null ? autolinker.link(feature.properties['PR_MDB_C'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PR_CODE'] !== null ? autolinker.link(feature.properties['PR_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PR_CODE_st'] !== null ? autolinker.link(feature.properties['PR_CODE_st'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PR_NAME'] !== null ? autolinker.link(feature.properties['PR_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? autolinker.link(feature.properties['Shape_Leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? autolinker.link(feature.properties['Shape_Area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SAL shapef'] !== null ? autolinker.link(feature.properties['SAL shapef'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_DaveytonSPpilotareas_2_0() {
+            return {
+                pane: 'pane_DaveytonSPpilotareas_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(243,166,178,0.12549019607843137)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_DaveytonSPpilotareas_2');
+        map.getPane('pane_DaveytonSPpilotareas_2').style.zIndex = 402;
+        map.getPane('pane_DaveytonSPpilotareas_2').style['mix-blend-mode'] = 'normal';
+        var layer_DaveytonSPpilotareas_2 = new L.geoJson(json_DaveytonSPpilotareas_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_DaveytonSPpilotareas_2',
+            layerName: 'layer_DaveytonSPpilotareas_2',
+            pane: 'pane_DaveytonSPpilotareas_2',
+            onEachFeature: pop_DaveytonSPpilotareas_2,
+            style: style_DaveytonSPpilotareas_2_0,
+        });
+        bounds_group.addLayer(layer_DaveytonSPpilotareas_2);
+        map.addLayer(layer_DaveytonSPpilotareas_2);
+        function pop_Diepslootpilotareas_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SAL_CODE'] !== null ? autolinker.link(feature.properties['SAL_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SAL_CODE_s'] !== null ? autolinker.link(feature.properties['SAL_CODE_s'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SP_CODE'] !== null ? autolinker.link(feature.properties['SP_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SP_CODE_st'] !== null ? autolinker.link(feature.properties['SP_CODE_st'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SP_NAME'] !== null ? autolinker.link(feature.properties['SP_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MP_CODE'] !== null ? autolinker.link(feature.properties['MP_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MP_CODE_st'] !== null ? autolinker.link(feature.properties['MP_CODE_st'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MP_NAME'] !== null ? autolinker.link(feature.properties['MP_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MN_MDB_C'] !== null ? autolinker.link(feature.properties['MN_MDB_C'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MN_CODE'] !== null ? autolinker.link(feature.properties['MN_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MN_CODE_st'] !== null ? autolinker.link(feature.properties['MN_CODE_st'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MN_NAME'] !== null ? autolinker.link(feature.properties['MN_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DC_MDB_C'] !== null ? autolinker.link(feature.properties['DC_MDB_C'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DC_MN_C'] !== null ? autolinker.link(feature.properties['DC_MN_C'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DC_MN_C_st'] !== null ? autolinker.link(feature.properties['DC_MN_C_st'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DC_NAME'] !== null ? autolinker.link(feature.properties['DC_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PR_MDB_C'] !== null ? autolinker.link(feature.properties['PR_MDB_C'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PR_CODE'] !== null ? autolinker.link(feature.properties['PR_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PR_CODE_st'] !== null ? autolinker.link(feature.properties['PR_CODE_st'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PR_NAME'] !== null ? autolinker.link(feature.properties['PR_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? autolinker.link(feature.properties['Shape_Leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? autolinker.link(feature.properties['Shape_Area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SAL shapef'] !== null ? autolinker.link(feature.properties['SAL shapef'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_Diepslootpilotareas_3_0() {
+            return {
+                pane: 'pane_Diepslootpilotareas_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(152,125,183,0.12549019607843137)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Diepslootpilotareas_3');
+        map.getPane('pane_Diepslootpilotareas_3').style.zIndex = 403;
+        map.getPane('pane_Diepslootpilotareas_3').style['mix-blend-mode'] = 'normal';
+        var layer_Diepslootpilotareas_3 = new L.geoJson(json_Diepslootpilotareas_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Diepslootpilotareas_3',
+            layerName: 'layer_Diepslootpilotareas_3',
+            pane: 'pane_Diepslootpilotareas_3',
+            onEachFeature: pop_Diepslootpilotareas_3,
+            style: style_Diepslootpilotareas_3_0,
+        });
+        bounds_group.addLayer(layer_Diepslootpilotareas_3);
+        map.addLayer(layer_Diepslootpilotareas_3);
+        function pop_SP_NAMEGT_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SP_NAME'] !== null ? autolinker.link(feature.properties['SP_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_SP_NAMEGT_4_0() {
+            return {
+                pane: 'pane_SP_NAMEGT_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 9.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(114,155,111,0.10196078431372549)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_SP_NAMEGT_4');
+        map.getPane('pane_SP_NAMEGT_4').style.zIndex = 404;
+        map.getPane('pane_SP_NAMEGT_4').style['mix-blend-mode'] = 'normal';
+        var layer_SP_NAMEGT_4 = new L.geoJson(json_SP_NAMEGT_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_SP_NAMEGT_4',
+            layerName: 'layer_SP_NAMEGT_4',
+            pane: 'pane_SP_NAMEGT_4',
+            onEachFeature: pop_SP_NAMEGT_4,
+            style: style_SP_NAMEGT_4_0,
+        });
+        bounds_group.addLayer(layer_SP_NAMEGT_4);
+        map.addLayer(layer_SP_NAMEGT_4);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        var overlaysTree = [
+            {label: '<img src="legend/SP_NAMEGT_4.png" /> SP_NAME GT', layer: layer_SP_NAMEGT_4},
+            {label: '<img src="legend/Diepslootpilotareas_3.png" /> Diepsloot pilot areas', layer: layer_Diepslootpilotareas_3},
+            {label: '<img src="legend/DaveytonSPpilotareas_2.png" /> Daveyton SP pilot areas', layer: layer_DaveytonSPpilotareas_2},
+            {label: "Google maps", layer: layer_Googlemaps_1},
+            {label: "GOogel satalite hybrid", layer: layer_GOogelsatalitehybrid_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: true,
+        });
+        lay.addTo(map);
+        setBounds();
+        var i = 0;
+        layer_DaveytonSPpilotareas_2.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['SAL shapef'] !== null?String('<div style="color: #f40817; font-size: 16pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['SAL shapef']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_DaveytonSPpilotareas_2'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_Diepslootpilotareas_3.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['SAL shapef'] !== null?String('<div style="color: #f12f2f; font-size: 15pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['SAL shapef']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Diepslootpilotareas_3'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_SP_NAMEGT_4.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['SP_NAME'] !== null?String('<div style="color: #323232; font-size: 20pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['SP_NAME']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_SP_NAMEGT_4'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_DaveytonSPpilotareas_2,layer_Diepslootpilotareas_3,layer_SP_NAMEGT_4]);
+        map.on("zoomend", function(){
+            resetLabels([layer_DaveytonSPpilotareas_2,layer_Diepslootpilotareas_3,layer_SP_NAMEGT_4]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_DaveytonSPpilotareas_2,layer_Diepslootpilotareas_3,layer_SP_NAMEGT_4]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_DaveytonSPpilotareas_2,layer_Diepslootpilotareas_3,layer_SP_NAMEGT_4]);
+        });
+        </script>
+    </body>
+</html>
